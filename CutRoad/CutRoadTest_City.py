@@ -37,7 +37,7 @@ def sortData(road, province, path,t_start):
 if __name__ == '__main__':
     t_start = time.time()
 
-    roadPath = r'D:\OneDrive\Documents\实验室\CAAD\140_数据专项\001_济南\山东省单线路网.geojson'
+    roadPath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\20200918_单线路网数据\山东省2.geojson'
     # roadPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\input\hainanTestRoad.shp'
     provincePath = r'D:\OneDrive\Documents\实验室\CAAD\140_数据专项\001_济南\市域区划.geojson'
     outputPath = r'D:\OneDrive\Documents\实验室\CAAD\140_数据专项\001_济南\路网_按市域'
