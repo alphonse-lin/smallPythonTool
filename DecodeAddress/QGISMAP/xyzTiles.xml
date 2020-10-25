@@ -1,0 +1,18 @@
+<!DOCTYPE connections>
+<qgsXYZTilesConnections version="1.0">
+    <xyztiles name="必应卫星" authcfg="" url="http://ecn.t3.tiles.virtualearth.net/tiles/a{q}.jpeg?g=1" referer="" zmax="19" password="" zmin="1" username=""/>
+    <xyztiles name="Esri卫星" authcfg="" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/%7Bz%7D/%7By%7D/%7Bx%7D" referer="" zmax="17" password="" zmin="0" username=""/>
+    <xyztiles name="Esri矢量" authcfg="" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/%7Bz%7D/%7By%7D/%7Bx%7D" referer="" zmax="17" password="" zmin="0" username=""/>
+    <xyztiles name="Esri地形" authcfg="" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/%7Bz%7D/%7By%7D/%7Bx%7D" referer="" zmax="13" password="" zmin="0" username=""/>
+     <xyztiles name="谷歌矢量" authcfg="" url="https://mt1.google.com/vt/lyrs=m&amp;x=%7Bx%7D&amp;y=%7By%7D&amp;z=%7Bz%7D" referer="" zmax="19" password="" zmin="0" username=""/>
+    <xyztiles name="谷歌卫星" authcfg="" url="https://mt1.google.com/vt/lyrs=s&amp;x=%7Bx%7D&amp;y=%7By%7D&amp;z=%7Bz%7D" referer="" zmax="19" password="" zmin="0" username=""/>
+    <xyztiles name="OpenStreetMap矢量" authcfg="" url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" referer="" zmax="19" password="" zmin="0" username=""/>
+     <xyztiles name="OpenStreetMap地形" authcfg="" url="https://tile.opentopomap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png" referer="Kartendaten: © OpenStreetMap-Mitwirkende, SRTM | Kartendarstellung: © OpenTopoMap (CC-BY-SA)" zmax="17" password="" zmin="1" username=""/>
+    <xyztiles name="google地形" authcfg="" url="http://mt0.google.cn/vt/lyrs=t&amp;hl=zh-CN&amp;gl=cn&amp;x={x}&amp;y={y}&amp;z={z}" referer="" zmax="18" password="" zmin="0" username=""/>
+    <xyztiles name="天地图影像" authcfg="" url="http://t0.tianditu.com/img_w/wmts?service=wmts&amp;request=GetTile&amp;version=1.0.0&amp;LAYER=img&amp;tileMatrixSet=w&amp;TileMatrix={z}&amp;TileRow={y}&amp;TileCol={x}&amp;style=default&amp;format=tiles&amp;tk=40b190683706230fade806c1ac8c14e8" referer="" zmax="18" password="" zmin="0" username=""/>
+    <xyztiles name="天地图注记" authcfg="" url="http://t0.tianditu.com/cva_w/wmts?service=wmts&amp;request=GetTile&amp;version=1.0.0&amp;LAYER=cva&amp;tileMatrixSet=w&amp;TileMatrix={z}&amp;TileRow={y}&amp;TileCol={x}&amp;style=default&amp;format=tiles&amp;tk=40b190683706230fade806c1ac8c14e8" referer="" zmax="18" password="" zmin="0" username=""/>
+    <xyztiles name="天地图矢量" authcfg="" url="http://t0.tianditu.com/vec_w/wmts?service=wmts&amp;request=GetTile&amp;version=1.0.0&amp;LAYER=vec&amp;tileMatrixSet=w&amp;TileMatrix={z}&amp;TileRow={y}&amp;TileCol={x}&amp;style=default&amp;format=tiles&amp;tk=40b190683706230fade806c1ac8c14e8" referer="" zmax="18" password="" zmin="0" username=""/>
+    <xyztiles name="高德卫星" authcfg="" url="https://webst01.is.autonavi.com/appmaptile?style=6&amp;x={x}&amp;y={y}&amp;z={z}" referer="" zmax="18" password="" zmin="0" username=""/>
+    <xyztiles name="高德路网" authcfg="" url="https://wprd01.is.autonavi.com/appmaptile?x={x}&amp;y={y}&amp;z={z}&amp;lang=zh_cn&amp;size=1&amp;scl=2&amp;style=8&amp;ltype=11" referer="" zmax="18" password="" zmin="0" username=""/>
+</qgsXYZTilesConnections>
+

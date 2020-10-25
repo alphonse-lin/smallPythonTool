@@ -1,0 +1,353 @@
+{
+  "log_id": 1150491964934549241,
+  "vehicle_info": [
+    {
+      "location": {
+        "height": 43,
+        "left": 381,
+        "top": 215,
+        "width": 65
+      },
+      "probability": 0.9758386015892029,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 49,
+        "left": 1,
+        "top": 231,
+        "width": 66
+      },
+      "probability": 0.9753798842430115,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 42,
+        "left": 415,
+        "top": 191,
+        "width": 57
+      },
+      "probability": 0.9720330834388733,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 31,
+        "left": 257,
+        "top": 194,
+        "width": 38
+      },
+      "probability": 0.9713636636734009,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 29,
+        "left": 337,
+        "top": 180,
+        "width": 38
+      },
+      "probability": 0.9674379825592041,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 42,
+        "left": 158,
+        "top": 206,
+        "width": 38
+      },
+      "probability": 0.9660496115684509,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 62,
+        "left": 55,
+        "top": 251,
+        "width": 70
+      },
+      "probability": 0.9658798575401306,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 50,
+        "left": 314,
+        "top": 216,
+        "width": 64
+      },
+      "probability": 0.9607850313186646,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 26,
+        "left": 373,
+        "top": 168,
+        "width": 43
+      },
+      "probability": 0.9568588137626648,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 26,
+        "left": 239,
+        "top": 167,
+        "width": 29
+      },
+      "probability": 0.9491189122200012,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 26,
+        "left": 173,
+        "top": 167,
+        "width": 25
+      },
+      "probability": 0.9359114766120911,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 32,
+        "left": 53,
+        "top": 192,
+        "width": 40
+      },
+      "probability": 0.8731349110603333,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 22,
+        "left": 338,
+        "top": 150,
+        "width": 35
+      },
+      "probability": 0.8367974162101746,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 21,
+        "left": 230,
+        "top": 148,
+        "width": 22
+      },
+      "probability": 0.5277752876281738,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 39,
+        "left": 146,
+        "top": 274,
+        "width": 51
+      },
+      "probability": 0.5186555981636047,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 21,
+        "left": 90,
+        "top": 169,
+        "width": 23
+      },
+      "probability": 0.5023007988929749,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 18,
+        "left": 253,
+        "top": 142,
+        "width": 22
+      },
+      "probability": 0.44173794984817505,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 16,
+        "left": 219,
+        "top": 134,
+        "width": 20
+      },
+      "probability": 0.42671430110931396,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 21,
+        "left": 312,
+        "top": 128,
+        "width": 28
+      },
+      "probability": 0.40903058648109436,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 22,
+        "left": 107,
+        "top": 151,
+        "width": 24
+      },
+      "probability": 0.38250964879989624,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 15,
+        "left": 263,
+        "top": 122,
+        "width": 20
+      },
+      "probability": 0.3364178538322449,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 29,
+        "left": 184,
+        "top": 135,
+        "width": 23
+      },
+      "probability": 0.2840858995914459,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 36,
+        "left": 434,
+        "top": 277,
+        "width": 39
+      },
+      "probability": 0.2816520631313324,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 13,
+        "left": 281,
+        "top": 135,
+        "width": 24
+      },
+      "probability": 0.2601911723613739,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 27,
+        "left": 269,
+        "top": 149,
+        "width": 23
+      },
+      "probability": 0.24893054366111755,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 15,
+        "left": 293,
+        "top": 123,
+        "width": 21
+      },
+      "probability": 0.24066807329654694,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 13,
+        "left": 345,
+        "top": 137,
+        "width": 27
+      },
+      "probability": 0.1659250110387802,
+      "type": "car"
+    },
+    {
+      "location": {
+        "height": 61,
+        "left": 279,
+        "top": 146,
+        "width": 60
+      },
+      "probability": 0.9520295262336731,
+      "type": "truck"
+    },
+    {
+      "location": {
+        "height": 63,
+        "left": 90,
+        "top": 176,
+        "width": 56
+      },
+      "probability": 0.9412209391593933,
+      "type": "truck"
+    },
+    {
+      "location": {
+        "height": 61,
+        "left": 384,
+        "top": 122,
+        "width": 89
+      },
+      "probability": 0.9850091338157654,
+      "type": "bus"
+    },
+    {
+      "location": {
+        "height": 53,
+        "left": 134,
+        "top": 135,
+        "width": 35
+      },
+      "probability": 0.8873504400253296,
+      "type": "bus"
+    },
+    {
+      "location": {
+        "height": 29,
+        "left": 184,
+        "top": 135,
+        "width": 23
+      },
+      "probability": 0.41478556394577026,
+      "type": "bus"
+    },
+    {
+      "location": {
+        "height": 24,
+        "left": 292,
+        "top": 96,
+        "width": 25
+      },
+      "probability": 0.29797863960266113,
+      "type": "bus"
+    },
+    {
+      "location": {
+        "height": 21,
+        "left": 312,
+        "top": 128,
+        "width": 28
+      },
+      "probability": 0.1831447035074234,
+      "type": "bus"
+    }
+  ],
+  "vehicle_num": {
+    "bus": 5,
+    "car": 27,
+    "carplate": 0,
+    "motorbike": 0,
+    "tricycle": 0,
+    "truck": 2
+  }
+}

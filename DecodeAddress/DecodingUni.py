@@ -14,8 +14,8 @@ def geocode(address):
 
 
 if __name__ == '__main__':
-    filePath = r'E:\114_temp\008_代码集\001_python\smallPythonTool\DecodeAddress\大学位置.xlsx'
-    outputPath= r'E:\114_temp\008_代码集\001_python\smallPythonTool\DecodeAddress\大学位置_result.csv'
+    filePath = r'E:\114_temp\008_代码集\001_python\smallPythonTool\DecodeAddress\input\大学位置03.xlsx'
+    outputPath= r'E:\114_temp\008_代码集\001_python\smallPythonTool\DecodeAddress\output\大学位置03_result.csv'
     data = pd.read_excel(filePath, sheet_name='Sheet1')
 
     results = data['高校']
