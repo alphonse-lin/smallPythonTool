@@ -23,6 +23,26 @@ def save_json(json_file, output_path):
     file.write(json_str)
     file.close()
 
+def preset(output_result):
+    v_all_count = {}
+    all_categories = ["car", "truck", "bus", "motorbike", "tricycle"]
+    all_count = []
+    for i in range(len(all_categories)):
+        amt = output_result['vehicle_num'][all_categories[i]]
+        v_all_count[all_categories[i]] = amt
+        all_count.append(int(amt))
+    v_count = sum(all_count)
+    v_categories = {
+        all_categories[0]: 'red',
+        all_categories[1]: 'blue',
+        all_categories[2]: 'green',
+        all_categories[3]: 'purples',
+        all_categories[4]: 'orange',
+    }
+    v_all_count['sum'] = v_count
+
+    return v_count, v_categories, v_all_count
+
 
 def draw_rect(ori_image, output_result):
     im = np.array(Image.open(ori_image), dtype=np.uint8)
@@ -48,25 +68,6 @@ def draw_rect(ori_image, output_result):
     plt.show()
 
 
-def preset(output_result):
-    v_all_count = {}
-    all_categories = ["car", "truck", "bus", "motorbike", "tricycle"]
-    all_count = []
-    for i in range(len(all_categories)):
-        amt = output_result['vehicle_num'][all_categories[i]]
-        v_all_count[all_categories[i]] = amt
-        all_count.append(int(amt))
-    v_count = sum(all_count)
-    v_categories = {
-        all_categories[0]: 'red',
-        all_categories[1]: 'blue',
-        all_categories[2]: 'green',
-        all_categories[3]: 'purples',
-        all_categories[4]: 'orange',
-    }
-    v_all_count['sum'] = v_count
-
-    return v_count, v_categories, v_all_count
 
 
 if __name__ == '__main__':
@@ -76,19 +77,9 @@ if __name__ == '__main__':
 
     image = get_file_content(input_path)
     result = client.vehicleDetect(image)
-    save_json(result, output_json_path)
 
+    save_json(result, output_json_path)
     vechile_count, vechile_categories, vechile_all_count = preset(result)
     draw_rect(input_path, result)
 
     print(vechile_all_count)
-
-#
-# # for i in range(int(vehicleCount)):
-# xmin = result['vehicle_info'][0]['location']['left']
-# ymin = result['vehicle_info'][0]['location']['top']
-# xmax = xmin + result['vehicle_info'][0]['location']['width']
-# ymax = ymin - result['vehicle_info'][0]['location']['height']
-# cv2.rectangle(updateImage, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)
-#
-# cv2.imwrite(drawedImage,updateImage)
