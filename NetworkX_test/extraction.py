@@ -30,7 +30,7 @@ def export(gdf, outputPath):
 if __name__ == '__main__':
     '''设计参数部分'''
     bufferDis = -15
-    outputPath = './blockTest.geojson'
+    outputPath = r'./originalData/fileExport/block.geojson'
 
     '''计算时间'''
     t_start = time.time()
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     # road = geopandas.GeoDataFrame.from_file(shp,encoding = 'utf-8')
 
     '''读取geojson文件_路网数据'''
-    geojson = r'C:\Users\CAUPD-BJ141\Downloads\唐山规划图纸.geojson'
+    geojson = r'./originalData/bj_temp.geojson'
     szRoad = geopandas.read_file(geojson)
 
     '''是否加和 行政区边界 和 路网 数据'''

@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import math
 import datetime
 from sklearn.cluster import MeanShift, KMeans
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point, Polygon, MultiPolygon
+from geopandas import GeoDataFrame, read_file
 
 
 #  人数估计
@@ -64,29 +65,73 @@ def school_num(info, max_label, children_num):
     return school_number
 
 
+# 把CSV的XY坐标的坐标系转化
+def convertCoordsOfCSV(df, firstEPSG, secondEPSG):
+    geo_points = [Point(x, y) for x, y in zip(df["x"], df["y"])]
+    df_data = df.drop(["x", "y"], axis=1)
+    new_df = GeoDataFrame(df_data, geometry=geo_points, crs={"init": "epsg:" + str(firstEPSG)})
+    new_df = new_df.to_crs({"init": "epsg:" + str(secondEPSG)})
+    all_x = [a.x for a in new_df.geometry]
+    all_y = [a.y for a in new_df.geometry]
+    new_df = new_df.drop(["geometry"], axis=1)
+    new_df = pd.DataFrame(new_df)
+    new_df["x"] = all_x
+    new_df["y"] = all_y
+    return new_df
+
+
+def convertGeometryCoords(gdf, firstEPSG, secondEPSG):
+    gdf.crs = {"init": "epsg:" + str(firstEPSG)}
+    new_gdf = gdf.to_crs({"init": "epsg:" + str(secondEPSG)})
+    return new_gdf
+
+
 # 输出模块
 def exportCSV(df, output_name):
     output_path = "./{0}.csv".format(output_name)
     df.to_csv(output_path, header=True)
 
 
+def multipolygon2Polygon(el):
+    if type(el) == MultiPolygon:
+        new_el = [x for x in el][0]
+    else:
+        new_el = el
+    return new_el
+
+
+def polygon2List(el):
+    ext = el.exterior
+    temp = [[x, y] for x, y in zip(ext.xy[0], ext.xy[1])]
+    temp = [temp]
+    return temp
+
+
 #  计算模块
 def cluster_calculation(filename, output_path_1st, output_path_2nd):
-    with open(filename, 'r', encoding='utf-8') as file:
-        data = json.load(file)
+    data = read_file(filename)
+    data = convertGeometryCoords(data, 4326, 32650)
+
 
     #  楼层转化与人口呈线性关系
     points = []
     info = {'floor': [], 'point': []}
-    for feature in data["features"]:
-        info['floor'].append(feature["properties"]['Floor'])
-        info['point'].append(feature["geometry"]["coordinates"][0])
+    # for feature in data["features"]:
+    #     info['floor'].append(feature["properties"]['Floor'])
+    #     info['point'].append(feature["geometry"]["coordinates"][0])
+    info['floor'] = list(data['Floor'])
+    temp = [multipolygon2Polygon(x) for x in data.geometry]
+    info['point'] = [polygon2List(x) for x in temp]
     center_points, point_people = center_geolocation(info['point'], info['floor'])
     info['point'] = center_points
     info['people'] = point_people
     for i in range(len(info['floor'])):
         for j in range(info['floor'][i]):
             points.append(center_points[i])
+
+    for i in range(len(data)):
+        info['floor'].append(data.loc[i,'Floor'])
+        info['point'].append(data.loc[i, 'geometry'])
 
     datas = tuple(points)
 
@@ -96,8 +141,8 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
     labels = ms.labels_
     cluster_centers = ms.cluster_centers_
 
-    u, indices=np.unique(points,return_index=True, axis=0)
-    labels_list=labels[indices]
+    u, indices = np.unique(points, return_index=True, axis=0)
+    labels_list = labels[indices]
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
 
@@ -106,7 +151,8 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
     df_centerPt1st = pd.DataFrame(columns=['x', 'y'])
     for i in range(len(cluster_centers)):
         df_centerPt1st = df_centerPt1st.append({'x': cluster_centers[i][0], 'y': cluster_centers[i][1]},
-                                            ignore_index=True)
+                                               ignore_index=True)
+    df_centerPt1st = convertCoordsOfCSV(df_centerPt1st, 32650, 4326)
     exportCSV(df_centerPt1st, 'output1st_centerPt')
 
     # # 输出第一次聚类，建筑标签
@@ -115,8 +161,8 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
         df_buildings = df_buildings.append(
             {'x': u[i][0], 'y': u[i][1], 'clusterNo.': labels_list[i]},
             ignore_index=True)
+    df_buildings = convertCoordsOfCSV(df_buildings, 32650, 4326)
     exportCSV(df_buildings, 'output1st_buildings')
-
     first_cluster_time = datetime.datetime.now()
 
     #  第一次聚类画图
@@ -143,6 +189,10 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
             last_point = points[i]
             color.append(colors[labels[i]])
     info['label'] = label
+
+    print(info['label'])
+    print(info['point'])
+    print(info['people'])
 
     for i in range(len(info['point'])):
         group_points[info['label'][i]].append(info['point'][i])
@@ -214,6 +264,7 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
             df_centerPt2nd = df_centerPt2nd.append(
                 {'x': centers[i][0], 'y': centers[i][1], 'people': second_group_people[i]},
                 ignore_index=True)
+    df_centerPt2nd = convertCoordsOfCSV(df_centerPt2nd, 32650, 4326)
     exportCSV(df_centerPt2nd, 'output2nd_centerPt')
     print(second_group_people)
 
