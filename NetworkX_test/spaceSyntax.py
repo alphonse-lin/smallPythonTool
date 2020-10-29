@@ -65,7 +65,6 @@ def multiline2Linestring(el):
 
 if __name__ == '__main__':
     inputFilePath = r'./originalData/bj_temp.geojson'
-    # inputFilePath = r'E:\PythonFile\testFile\NetworkX_test\originalData\fileExport\road.geojson'
     outputFilePath = r'./originalData/road_BT+CL.geojson'
 
     df = read_file(inputFilePath)

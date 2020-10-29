@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
 import geopandas
 import shapely
-from shapely.geometry import Point, Polygon, shape
+from shapely.geometry import Point, Polygon, shape, MultiLineString, LineString
 import time
 import math
 import os
 
 
 def exportGeoJSON(gdf, outputPath):
-    # gdf.crs = {"init": "epsg:32650"}
-    # gdf = gdf.to_crs({"init": "epsg:4326"})
+    gdf.crs = {"init": "epsg:32650"}
+    gdf = gdf.to_crs({"init": "epsg:4326"})
     gdf.to_file(outputPath, driver='GeoJSON')
     print("输出完成")
 
@@ -27,11 +27,23 @@ def export(gdf, outputPath):
     print("输出文件，路径为{0}".format(outputPath))
 
 
+def multiline2Line(line):
+    if type(line) == MultiLineString:
+        new_line = [x for x in line][0]
+    else:
+        new_line = line
+    return new_line
+
+def convertGeometryCoords(gdf, firstEPSG, secondEPSG):
+    gdf.crs = {"init": "epsg:" + str(firstEPSG)}
+    new_gdf = gdf.to_crs({"init": "epsg:" + str(secondEPSG)})
+    return new_gdf
+
 if __name__ == '__main__':
     '''设计参数部分'''
     bufferDis = -20
-    inputPath=r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\20200918_单线路网数据'
-    outputPath=r'D:\实验室\Data\003_城市路网\010_单线路网地块数据'
+    inputPath=r'E:\OneDrive\桌面'
+    outputPath=r'E:\114_temp\008_代码集\001_python\smallPythonTool\NetworkX_test\originalData\fileExport'
     files = os.listdir(inputPath)
     for file in files:
         if file.endswith('.geojson'):
@@ -51,13 +63,14 @@ if __name__ == '__main__':
 
                     '''读取geojson文件_路网数据'''
                     szRoad = geopandas.read_file(geojson)
+                    szRoad = convertGeometryCoords(szRoad, 4326, 32650)
                     timeCount('读取文件耗时', t_start)
 
                     '''是否加和 行政区边界 和 路网 数据'''
                     # lines=list(road['geometry'])+list(sz.boundary)
 
                     '''提取地块'''
-                    lines = list(szRoad['geometry'])
+                    lines = [multiline2Line(x) for x in szRoad['geometry']]
                     merged_lines = shapely.ops.linemerge(lines)
                     boder_lines = shapely.ops.unary_union(merged_lines)
                     decomposition = shapely.ops.polygonize_full(boder_lines)

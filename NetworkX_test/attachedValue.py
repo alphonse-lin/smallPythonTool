@@ -72,7 +72,7 @@ def blocksValueGet(polygons, index):
         btSum, clSum = blockValueGet(fidsList, roadOri)
 
         btResult.append(btSum)
-        clResult.append(btSum)
+        clResult.append(clSum)
 
     return btResult, clResult
 
