@@ -13,6 +13,7 @@ from shapely.geometry import Point, Polygon, MultiPolygon
 from geopandas import GeoDataFrame, read_file
 import os
 
+
 #  人数估计
 def get_people(area, floor):
     if floor >= 1 and floor <= 3:
@@ -84,23 +85,27 @@ def convertGeometryCoords(gdf, firstEPSG, secondEPSG):
     new_gdf = gdf.to_crs({"init": "epsg:" + str(secondEPSG)})
     return new_gdf
 
-#增加ID
-def AddIndex(input_file,output_path):
+
+# 增加ID
+def AddIndex(input_file, output_path, outputname):
     gdf = read_file(input_file)
     for i in range(len(gdf['Id'])):
         gdf.loc[i, 'Id'] = i
-    exportGeoJSON(gdf, output_path)
+    exportGeoJSON(gdf, output_path, outputname)
+
 
 # 输出模块
 def exportCSV(df, outputPath, output_name):
-    output_path = outputPath+"/{0}.csv".format(output_name)
+    output_path = outputPath + "/{0}.csv".format(output_name)
     df.to_csv(output_path, header=True)
 
-def exportGeoJSON(gdf, outputPath):
+
+def exportGeoJSON(gdf, outputPath, output_name):
     # gdf.crs = {"init": "epsg:32650"}
     # gdf = gdf.to_crs({"init": "epsg:4326"})
-    gdf.to_file(outputPath, driver='GeoJSON')
-    print("增加ID模块，计算完成")
+    output_path = outputPath + "/{0}.geojson".format(output_name)
+    gdf.to_file(output_path, driver='GeoJSON')
+    print("geojson完成")
 
 
 def multipolygon2Polygon(el):
@@ -116,6 +121,7 @@ def polygon2List(el):
     temp = [[x, y] for x, y in zip(ext.xy[0], ext.xy[1])]
     temp = [temp]
     return temp
+
 
 #  计算模块
 def cluster_calculation(filename, outputPath):
@@ -152,20 +158,22 @@ def cluster_calculation(filename, outputPath):
 
     # 输出
     # # 输出第一次聚类中心点
-    df_centerPt1st = pd.DataFrame(columns=['x', 'y'])
-    for i in range(len(cluster_centers)):
-        df_centerPt1st = df_centerPt1st.append({'x': cluster_centers[i][0], 'y': cluster_centers[i][1]},
-                                               ignore_index=True)
-    df_centerPt1st = convertCoordsOfCSV(df_centerPt1st, 32650, 4326)
-    exportCSV(df_centerPt1st, outputPath, 'output1st_centerPt')
+    # df_centerPt1st = pd.DataFrame(columns=['x', 'y'])
+    # for i in range(len(cluster_centers)):
+    #     df_centerPt1st = df_centerPt1st.append({'x': cluster_centers[i][0], 'y': cluster_centers[i][1]},
+    #                                            ignore_index=True)
+    # df_centerPt1st = convertCoordsOfCSV(df_centerPt1st, 32650, 4326)
+    # exportCSV(df_centerPt1st, outputPath, 'output1st_centerPt')
 
     # # 输出第一次聚类，建筑id及所属组团
-    df_buildings = pd.DataFrame(columns=['clusterNo.', 'buildingId'])
+    df_buildings = pd.DataFrame(columns=['clusterNo.', 'Id'])
     for i in range(len(u)):
         df_buildings = df_buildings.append(
-            {'clusterNo.': labels_list[i], 'buildingId': id_list[i]},
+            {'clusterNo.': labels_list[i], 'Id': id_list[i]},
             ignore_index=True)
-    exportCSV(df_buildings,outputPath,'output1st_buildings')
+
+    data=data.merge(df_buildings, on="Id")
+    exportGeoJSON(data, outputPath, 'buildings_part_output')
     first_cluster_time = datetime.datetime.now()
 
     #  第一次聚类画图
@@ -265,7 +273,7 @@ def cluster_calculation(filename, outputPath):
                 {'x': centers[i][0], 'y': centers[i][1], 'people': second_group_people[i]},
                 ignore_index=True)
     df_centerPt2nd = convertCoordsOfCSV(df_centerPt2nd, 32650, 4326)
-    exportCSV(df_centerPt2nd, outputPath,'output2nd_centerPt')
+    exportCSV(df_centerPt2nd, outputPath, 'output2nd_centerPt')
 
     print("总运行时间：" + (str)(finish_time - start_time))
     print("第一次聚类时间" + (str)(first_cluster_time - start_time))
@@ -276,12 +284,11 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     filename_original = 'buildings_part.geojson'
     filename_addIndex = './outputFile/buildings_part_output.geojson'
-    AddIndex(filename_original, filename_addIndex)
     output_path = './outputFile'
 
     # 计算模块
+    AddIndex(filename_original, output_path, outputname='buildings_part_output')
     try:
         cluster_calculation(filename_addIndex, output_path)
     except IOError:
         print("File is not accessible.")
-
