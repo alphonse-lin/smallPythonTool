@@ -84,11 +84,23 @@ def convertGeometryCoords(gdf, firstEPSG, secondEPSG):
     new_gdf = gdf.to_crs({"init": "epsg:" + str(secondEPSG)})
     return new_gdf
 
+#增加ID
+def AddIndex(input_file,output_path):
+    gdf = read_file(input_file)
+    for i in range(len(gdf['Id'])):
+        gdf.loc[i, 'Id'] = i
+    exportGeoJSON(gdf, output_path)
 
 # 输出模块
 def exportCSV(df, outputPath, output_name):
     output_path = outputPath+"/{0}.csv".format(output_name)
     df.to_csv(output_path, header=True)
+
+def exportGeoJSON(gdf, outputPath):
+    # gdf.crs = {"init": "epsg:32650"}
+    # gdf = gdf.to_crs({"init": "epsg:4326"})
+    gdf.to_file(outputPath, driver='GeoJSON')
+    print("增加ID模块，计算完成")
 
 
 def multipolygon2Polygon(el):
@@ -104,7 +116,6 @@ def polygon2List(el):
     temp = [[x, y] for x, y in zip(ext.xy[0], ext.xy[1])]
     temp = [temp]
     return temp
-
 
 #  计算模块
 def cluster_calculation(filename, outputPath):
@@ -263,8 +274,14 @@ def cluster_calculation(filename, outputPath):
 
 if __name__ == '__main__':
     start_time = datetime.datetime.now()
-    filename = 'buildings_part_output.geojson'
+    filename_original = 'buildings_part.geojson'
+    filename_addIndex = './outputFile/buildings_part_output.geojson'
+    AddIndex(filename_original, filename_addIndex)
     output_path = './outputFile'
 
     # 计算模块
-    cluster_calculation(filename, output_path)
+    try:
+        cluster_calculation(filename_addIndex, output_path)
+    except IOError:
+        print("File is not accessible.")
+
