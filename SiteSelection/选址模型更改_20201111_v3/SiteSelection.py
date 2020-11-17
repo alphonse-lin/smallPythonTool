@@ -38,7 +38,7 @@ def center_geolocation(polygon, floors):
     point_people = []
     for i in range(len(polygon)):
         area = polygon[i].area
-        people = get_people(area, floors[i])
+        people = get_people(area, (int)(floors[i]))
         center_point = polygon[i].centroid
         center_points.append([center_point.x, center_point.y])
         point_people.append(people)
@@ -89,7 +89,7 @@ def convertGeometryCoords(gdf, firstEPSG, secondEPSG):
 # 增加ID
 def AddIndex(input_file, output_path, outputname):
     gdf = read_file(input_file)
-    for i in range(len(gdf['Id'])):
+    for i in range(len(gdf['Floor'])):
         gdf.loc[i, 'Id'] = i
     exportGeoJSON(gdf, output_path, outputname)
 
@@ -103,6 +103,13 @@ def exportCSV(df, outputPath, output_name):
 def exportGeoJSON(gdf, outputPath, output_name):
     # gdf.crs = {"init": "epsg:32650"}
     # gdf = gdf.to_crs({"init": "epsg:4326"})
+    output_path = outputPath + "/{0}.geojson".format(output_name)
+    gdf.to_file(output_path, driver='GeoJSON')
+    print("geojson完成")
+
+def exportGeoJSON2(gdf, outputPath, output_name):
+    gdf.crs = {"init": "epsg:32650"}
+    gdf = gdf.to_crs({"init": "epsg:4326"})
     output_path = outputPath + "/{0}.geojson".format(output_name)
     gdf.to_file(output_path, driver='GeoJSON')
     print("geojson完成")
@@ -139,7 +146,7 @@ def cluster_calculation(filename, outputPath):
     info['point'] = center_points
     info['people'] = point_people
     for i in range(len(info['floor'])):
-        for j in range(info['floor'][i]):
+        for j in range(int(info['floor'][i])):
             points.append(center_points[i])
             buildingIds.append(info['buildingId'][i])
     datas = tuple(points)
@@ -173,7 +180,7 @@ def cluster_calculation(filename, outputPath):
             ignore_index=True)
 
     data=data.merge(df_buildings, on="Id")
-    exportGeoJSON(data, outputPath, 'buildings_part_output')
+    exportGeoJSON2(data, outputPath, 'buildings_part_output')
     first_cluster_time = datetime.datetime.now()
 
     #  第一次聚类画图
@@ -181,9 +188,6 @@ def cluster_calculation(filename, outputPath):
     # plt.clf()
 
     max_label = max(labels)
-    colors = ['b', 'c', 'g', 'm', 'r', 'k', 'y', 'gray', 'lightcoral', 'bisque', 'darkorange', 'gold', 'lime', 'cyan',
-              'indigo', 'royalblue']
-    color = []
 
     last_point = [0, 0]
     label = []
@@ -198,7 +202,6 @@ def cluster_calculation(filename, outputPath):
         if last_point != points[i]:
             label.append(labels[i])
             last_point = points[i]
-            color.append(colors[labels[i]])
     info['label'] = label
 
     for i in range(len(info['point'])):
@@ -223,10 +226,12 @@ def cluster_calculation(filename, outputPath):
     second_group_points = []
     second_group_people = []
 
+    print(max_label)
+
     for i in range(len(schools)):
-        kmeans = KMeans(n_clusters=(int)(schools[i]), random_state=0).fit(group_points[i])
+        kmeans = KMeans(n_clusters=math.ceil((schools[i])), random_state=0).fit(group_points[i])
         k_labels = kmeans.labels_
-        for k, col in zip(range((int)(schools[i])), colors):
+        for k in zip(range((int)(schools[i]))):
             points, x, y = [], [], []
             people = 0
             for j in range(len(k_labels)):
@@ -240,7 +245,7 @@ def cluster_calculation(filename, outputPath):
             second_group_points.append(points)
             second_group_people.append(people)
             cluster_center = kmeans.cluster_centers_[k]
-            plt.plot(x, y, 'w', markerfacecolor=col, marker='.')  # 将同一类的点表示出来
+            # plt.plot(x, y, 'w', markerfacecolor=col, marker='.')  # 将同一类的点表示出来
             # plt.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,markeredgecolor='k', marker='o')  # 将聚类中心单独表示出来
 
     second_cluster_time = datetime.datetime.now()
@@ -282,9 +287,13 @@ def cluster_calculation(filename, outputPath):
 
 if __name__ == '__main__':
     start_time = datetime.datetime.now()
-    filename_original = 'buildings_part.geojson'
-    filename_addIndex = './outputFile/buildings_part_output.geojson'
-    output_path = './outputFile'
+    # filename_original = 'buildings_part.geojson'
+    # filename_addIndex = './outputFile/buildings_part_output.geojson'
+    # output_path = './outputFile'
+
+    filename_original = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\new_buildingPart.geojson'
+    filename_addIndex = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output\buildings_part_output.geojson'
+    output_path = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output'
 
     # 计算模块
     AddIndex(filename_original, output_path, outputname='buildings_part_output')

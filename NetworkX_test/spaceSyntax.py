@@ -64,8 +64,11 @@ def multiline2Linestring(el):
 
 
 if __name__ == '__main__':
-    inputFilePath = r'./originalData/bj_temp.geojson'
-    outputFilePath = r'./originalData/road_BT+CL.geojson'
+    # inputFilePath = r'./originalData/bj_temp.geojson'
+    # outputFilePath = r'./originalData/road_BT+CL.geojson'
+
+    inputFilePath = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\new_road.geojson'
+    outputFilePath = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output\road_BT+CL.geojson'
 
     df = read_file(inputFilePath)
     df = convertGeometryCoords(df, 4326, 32650)
