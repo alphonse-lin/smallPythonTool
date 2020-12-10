@@ -15,30 +15,30 @@ def exportGeoJSON(gdf, outputPath):
 
 t_start = time.time()
 
-inputPath=r'D:\实验室\Data\003_城市路网\002_导航数据\全国_导航数据_按省份'
-outputPath=r'D:\实验室\Data\003_城市路网\002_导航数据\全国_导航数据_按省份\output'
+inputPath=r'D:\实验室\Data\42城市06\shp文件'
+outputPath=r'D:\实验室\Data\42城市06\shp文件\缩小'
 files=os.listdir(inputPath)
 s=[]
 print(len(files))
 
 for file in files:
     if not os.path.isdir(file):
-        roadPath=os.path.join(inputPath,file)
-        exportPath=os.path.join(outputPath,file)
-        if not os.path.isfile(exportPath):
+        if file.endswith('shp'):
+            roadPath=os.path.join(inputPath,file)
+            exportPath=os.path.join(outputPath,file)
+            if not os.path.isfile(exportPath):
 
-            road = gpd.read_file(roadPath, encoding='utf8')
-            road = gpd.GeoDataFrame({"geometry":road.geometry\
-                                     ,"FuncClass": road["FuncClass"]\
-                                     ,"Direction": road["Direction"]\
-                                     ,"Kind":road["Kind"]}
-                                    )
+                road = gpd.read_file(roadPath, encoding='unicode_escape')
+                road = gpd.GeoDataFrame({"geometry":road.geometry\
+                                         ,"FuncClass": road["FuncClass"]\
+                                         ,"Direction": road["Direction"]\
+                                         ,"Kind":road["Kind"]}
+                                        )
 
-            exportGeoJSON(road, exportPath)
-        timeCount("{0}存储完成".format(file), t_start)
+                exportGeoJSON(road, exportPath)
+            timeCount("{0}存储完成".format(file), t_start)
 
-
-# t_start = time.time()
+t_start = time.time()
 #
 # roadPath = r'D:\实验室\Data\003_城市路网\002_导航数据\全国_导航数据\roads 导航2019_乡镇村道路.shp'
 # outputPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\output_导航数据\乡镇村道路\乡镇村道路_简化'

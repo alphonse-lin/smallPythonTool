@@ -10,7 +10,7 @@ def timeCount(calcMode, t_start):
 
 def exportGeoJSON(gdf, outputPath):
     gdf.crs = {"init": "epsg:4326"}
-    gdf.to_file(outputPath, driver='GeoJSON',encoding='utf8')
+    gdf.to_file(outputPath, driver='GeoJSON', encoding='utf8')
 
 
 def roadCluster(list, roads):
@@ -18,37 +18,38 @@ def roadCluster(list, roads):
     return roadList
 
 
-def sortData(road, province, path,t_start):
+def sortData(road, province, path, t_start):
     newGdf = gpd.sjoin(road, province, op='intersects')
-    newGdf =newGdf.reset_index().drop(["index"], axis=1)
+    newGdf = newGdf.reset_index().drop(["index"], axis=1)
     timeCount('sjoin结束', t_start)
     indexs = newGdf.index_right.values
+    newGdf = newGdf.drop(["CityName", "index_right"], axis=1)
     temp = list(set(indexs))
     # timeCount('getIndexRight', t_start)
     for j in range(len(temp)):
-        exportPath = "{0}\{1}_乡镇村道路.geojson".format(path, province.loc[temp[j],"省"])
-        indexList = [i for i,x in  enumerate(indexs) if x == temp[j]]
+        exportPath = r"{0}\{1}.geojson".format(path, province.loc[temp[j], "CityName"])
+        indexList = [i for i, x in enumerate(indexs) if x == temp[j]]
         singleRoad = roadCluster(indexList, newGdf)
 
         exportGeoJSON(singleRoad, exportPath)
-        timeCount("{0}输出完成".format(province.loc[temp[j],"省"]),t_start)
+        timeCount("{0}输出完成".format(province.loc[temp[j], "CityName"]), t_start)
 
 
 if __name__ == '__main__':
     t_start = time.time()
 
-    roadPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\input\乡镇村_CRS.shp'
+    roadPath = r'D:\实验室\Data\42城市06\shp文件缩小\42cities.shp'
     # roadPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\input\hainanTestRoad.shp'
-    provincePath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\input\区划\省.shp'
-    outputPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\output_导航数据\乡镇村道路'
+    provincePath = r'D:\实验室\Data\42城市06\城市42\地市42.shp'
+    outputPath = r'D:\实验室\Data\42城市06\城市42splited'
 
-    road_notCRS = gpd.read_file(roadPath,encoding='utf8')
-    province_notCRS = gpd.read_file(provincePath,encoding='utf8')
-    road=road_notCRS.to_crs({"init": "epsg:4326"})
-    province=province_notCRS.to_crs({"init": "epsg:4326"})
+    road = gpd.read_file(roadPath, encoding='utf-8')
+    province = gpd.read_file(provincePath, encoding='gbk')
+    # road = road_notCRS.to_crs({"init": "epsg:4326"})
+    # province = province_notCRS.to_crs({"init": "epsg:4326"})
     timeCount('读取结束', t_start)
 
-    sortData(road, province, outputPath,t_start)
+    sortData(road, province, outputPath, t_start)
     timeCount('存储处理结束', t_start)
 
     # # polygon['id']=range(0, len(polygon))

@@ -29,6 +29,7 @@ def sortData(road, province, path,t_start):
         exportPath = "{0}\{1}.geojson".format(path, province.loc[temp[j],"市"])
         indexList = [i for i,x in  enumerate(indexs) if x == temp[j]]
         singleRoad = roadCluster(indexList, newGdf)
+        singleRoad = gpd.GeoDataFrame({"geometry": singleRoad.geometry})
 
         exportGeoJSON(singleRoad, exportPath)
         timeCount("{0}输出完成".format(province.loc[temp[j],"市"]),t_start)
@@ -37,10 +38,10 @@ def sortData(road, province, path,t_start):
 if __name__ == '__main__':
     t_start = time.time()
 
-    roadPath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\20200918_单线路网数据\山东省2.geojson'
+    roadPath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\20200918_单线路网数据\江苏省.geojson'
     # roadPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\input\hainanTestRoad.shp'
-    provincePath = r'D:\OneDrive\Documents\实验室\CAAD\140_数据专项\001_济南\市域区划.geojson'
-    outputPath = r'D:\OneDrive\Documents\实验室\CAAD\140_数据专项\001_济南\路网_按市域'
+    provincePath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\单线路网数据_市域\江苏省\江苏省市级.geojson'
+    outputPath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\单线路网数据_市域\江苏省'
 
     road= gpd.read_file(roadPath,encoding='utf8')
     province = gpd.read_file(provincePath,encoding='utf8')
