@@ -72,16 +72,21 @@ def blocksValueGet(polygons, index):
         btSum, clSum = blockValueGet(fidsList, roadOri)
 
         btResult.append(btSum)
-        clResult.append(btSum)
+        clResult.append(clSum)
 
     return btResult, clResult
 
 if __name__ == '__main__':
     t_start = time.time()
 
-    roadFile = './originalData/road_BT+CL.geojson'
-    blockFile = './originalData/fileExport/block.geojson'
-    outputPath = './originalData/fileExport/newBlockResult_BT+CL.geojson'
+    # roadFile = './originalData/road_BT+CL.geojson'
+    # blockFile = './originalData/fileExport/block.geojson'
+    # outputPath = './originalData/fileExport/newBlockResult_BT+CL.geojson'
+
+    roadFile = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output\road_BT+CL.geojson'
+    blockFile = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\new_block.geojson'
+    outputPath = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output\newBlockResult_BT+CL.geojson'
+
     timeCount('读取', t_start)
 
     roadOri = geopandas.read_file(roadFile)

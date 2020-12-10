@@ -11,6 +11,7 @@ import datetime
 from sklearn.cluster import MeanShift, KMeans
 from shapely.geometry import Point, Polygon, MultiPolygon
 from geopandas import GeoDataFrame, read_file
+import os
 
 
 #  人数估计
@@ -37,7 +38,7 @@ def center_geolocation(polygon, floors):
     point_people = []
     for i in range(len(polygon)):
         area = polygon[i].area
-        people = get_people(area, floors[i])
+        people = get_people(area, (int)(floors[i]))
         center_point = polygon[i].centroid
         center_points.append([center_point.x, center_point.y])
         point_people.append(people)
@@ -85,10 +86,33 @@ def convertGeometryCoords(gdf, firstEPSG, secondEPSG):
     return new_gdf
 
 
+# 增加ID
+def AddIndex(input_file, output_path, outputname):
+    gdf = read_file(input_file)
+    for i in range(len(gdf['Floor'])):
+        gdf.loc[i, 'Id'] = i
+    exportGeoJSON(gdf, output_path, outputname)
+
+
 # 输出模块
-def exportCSV(df, output_name):
-    output_path = "./{0}.csv".format(output_name)
+def exportCSV(df, outputPath, output_name):
+    output_path = outputPath + "/{0}.csv".format(output_name)
     df.to_csv(output_path, header=True)
+
+
+def exportGeoJSON(gdf, outputPath, output_name):
+    # gdf.crs = {"init": "epsg:32650"}
+    # gdf = gdf.to_crs({"init": "epsg:4326"})
+    output_path = outputPath + "/{0}.geojson".format(output_name)
+    gdf.to_file(output_path, driver='GeoJSON')
+    print("geojson完成")
+
+def exportGeoJSON2(gdf, outputPath, output_name):
+    gdf.crs = {"init": "epsg:32650"}
+    gdf = gdf.to_crs({"init": "epsg:4326"})
+    output_path = outputPath + "/{0}.geojson".format(output_name)
+    gdf.to_file(output_path, driver='GeoJSON')
+    print("geojson完成")
 
 
 def multipolygon2Polygon(el):
@@ -107,22 +131,24 @@ def polygon2List(el):
 
 
 #  计算模块
-def cluster_calculation(filename, output_path_1st, output_path_2nd):
+def cluster_calculation(filename, outputPath):
     data = read_file(filename)
     data = convertGeometryCoords(data, 4326, 32650)
     #  楼层转化与人口呈线性关系
     points = []
-    info = {'floor': [], 'point': []}
+    buildingIds = []
+    info = {'floor': [], 'point': [], 'buildingId': []}
     info['floor'] = list(data['Floor'])
+    info['buildingId'] = list(data['Id'])
 
     temp = [multipolygon2Polygon(x) for x in data.geometry]
     center_points, point_people = center_geolocation(temp, info['floor'])
     info['point'] = center_points
     info['people'] = point_people
     for i in range(len(info['floor'])):
-        for j in range(info['floor'][i]):
+        for j in range(int(info['floor'][i])):
             points.append(center_points[i])
-
+            buildingIds.append(info['buildingId'][i])
     datas = tuple(points)
 
     #  Meanshift均值偏移算法聚类
@@ -133,26 +159,28 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
 
     u, indices = np.unique(points, return_index=True, axis=0)
     labels_list = labels[indices]
+    id_list = np.array(buildingIds)[indices]
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
 
     # 输出
     # # 输出第一次聚类中心点
-    df_centerPt1st = pd.DataFrame(columns=['x', 'y'])
-    for i in range(len(cluster_centers)):
-        df_centerPt1st = df_centerPt1st.append({'x': cluster_centers[i][0], 'y': cluster_centers[i][1]},
-                                               ignore_index=True)
-    df_centerPt1st = convertCoordsOfCSV(df_centerPt1st, 32650, 4326)
-    exportCSV(df_centerPt1st, 'output1st_centerPt')
+    # df_centerPt1st = pd.DataFrame(columns=['x', 'y'])
+    # for i in range(len(cluster_centers)):
+    #     df_centerPt1st = df_centerPt1st.append({'x': cluster_centers[i][0], 'y': cluster_centers[i][1]},
+    #                                            ignore_index=True)
+    # df_centerPt1st = convertCoordsOfCSV(df_centerPt1st, 32650, 4326)
+    # exportCSV(df_centerPt1st, outputPath, 'output1st_centerPt')
 
-    # # 输出第一次聚类，建筑标签
-    df_buildings = pd.DataFrame(columns=['x', 'y', 'clusterNo.'])
+    # # 输出第一次聚类，建筑id及所属组团
+    df_buildings = pd.DataFrame(columns=['clusterNo.', 'Id'])
     for i in range(len(u)):
         df_buildings = df_buildings.append(
-            {'x': u[i][0], 'y': u[i][1], 'clusterNo.': labels_list[i]},
+            {'clusterNo.': labels_list[i], 'Id': id_list[i]},
             ignore_index=True)
-    df_buildings = convertCoordsOfCSV(df_buildings, 32650, 4326)
-    exportCSV(df_buildings, 'output1st_buildings')
+
+    data=data.merge(df_buildings, on="Id")
+    exportGeoJSON2(data, outputPath, 'buildings_part_output')
     first_cluster_time = datetime.datetime.now()
 
     #  第一次聚类画图
@@ -160,9 +188,6 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
     # plt.clf()
 
     max_label = max(labels)
-    colors = ['b', 'c', 'g', 'm', 'r', 'k', 'y', 'gray', 'lightcoral', 'bisque', 'darkorange', 'gold', 'lime', 'cyan',
-              'indigo', 'royalblue']
-    color = []
 
     last_point = [0, 0]
     label = []
@@ -177,7 +202,6 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
         if last_point != points[i]:
             label.append(labels[i])
             last_point = points[i]
-            color.append(colors[labels[i]])
     info['label'] = label
 
     for i in range(len(info['point'])):
@@ -202,10 +226,12 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
     second_group_points = []
     second_group_people = []
 
+    print(max_label)
+
     for i in range(len(schools)):
-        kmeans = KMeans(n_clusters=(int)(schools[i]), random_state=0).fit(group_points[i])
+        kmeans = KMeans(n_clusters=math.ceil((schools[i])), random_state=0).fit(group_points[i])
         k_labels = kmeans.labels_
-        for k, col in zip(range((int)(schools[i])), colors):
+        for k in zip(range((int)(schools[i]))):
             points, x, y = [], [], []
             people = 0
             for j in range(len(k_labels)):
@@ -219,7 +245,7 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
             second_group_points.append(points)
             second_group_people.append(people)
             cluster_center = kmeans.cluster_centers_[k]
-            plt.plot(x, y, 'w', markerfacecolor=col, marker='.')  # 将同一类的点表示出来
+            # plt.plot(x, y, 'w', markerfacecolor=col, marker='.')  # 将同一类的点表示出来
             # plt.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,markeredgecolor='k', marker='o')  # 将聚类中心单独表示出来
 
     second_cluster_time = datetime.datetime.now()
@@ -252,7 +278,7 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
                 {'x': centers[i][0], 'y': centers[i][1], 'people': second_group_people[i]},
                 ignore_index=True)
     df_centerPt2nd = convertCoordsOfCSV(df_centerPt2nd, 32650, 4326)
-    exportCSV(df_centerPt2nd, 'output2nd_centerPt')
+    exportCSV(df_centerPt2nd, outputPath, 'output2nd_centerPt')
 
     print("总运行时间：" + (str)(finish_time - start_time))
     print("第一次聚类时间" + (str)(first_cluster_time - start_time))
@@ -261,9 +287,17 @@ def cluster_calculation(filename, output_path_1st, output_path_2nd):
 
 if __name__ == '__main__':
     start_time = datetime.datetime.now()
-    filename = 'buildings_part.geojson'
-    output_path_1st = './output_1st.csv'
-    output_path_2nd = './output_2nd.csv'
+    # filename_original = 'buildings_part.geojson'
+    # filename_addIndex = './outputFile/buildings_part_output.geojson'
+    # output_path = './outputFile'
+
+    filename_original = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\new_buildingPart.geojson'
+    filename_addIndex = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output\buildings_part_output.geojson'
+    output_path = r'E:\OneDrive\Documents\实验室\CAAD\114_temp\008_浩鲸平台开发\最终数据\数据集\output'
 
     # 计算模块
-    cluster_calculation(filename, output_path_1st, output_path_2nd)
+    AddIndex(filename_original, output_path, outputname='buildings_part_output')
+    try:
+        cluster_calculation(filename_addIndex, output_path)
+    except IOError:
+        print("File is not accessible.")
