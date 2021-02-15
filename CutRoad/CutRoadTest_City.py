@@ -29,7 +29,7 @@ def sortData(road, province, path,t_start):
         exportPath = "{0}\{1}.geojson".format(path, province.loc[temp[j],"市"])
         indexList = [i for i,x in  enumerate(indexs) if x == temp[j]]
         singleRoad = roadCluster(indexList, newGdf)
-        singleRoad = gpd.GeoDataFrame({"geometry": singleRoad.geometry})
+        # singleRoad = gpd.GeoDataFrame({"geometry": singleRoad.geometry})
 
         exportGeoJSON(singleRoad, exportPath)
         timeCount("{0}输出完成".format(province.loc[temp[j],"市"]),t_start)
@@ -38,10 +38,10 @@ def sortData(road, province, path,t_start):
 if __name__ == '__main__':
     t_start = time.time()
 
-    roadPath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\20200918_单线路网数据\江苏省.geojson'
+    roadPath = r'F:\001_数据集\Data\003_城市路网\005_OSM\中国道路网2019\gis_osm_roads_free_1.shp'
     # roadPath = r'D:\OneDrive\Documents\实验室\CAAD\126_中心路网提取\Utilis\CutRoad\input\hainanTestRoad.shp'
-    provincePath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\单线路网数据_市域\江苏省\江苏省市级.geojson'
-    outputPath = r'D:\实验室\Data\003_城市路网\009_现有单线路网数据\单线路网数据_市域\江苏省'
+    provincePath = r'E:\114_temp\015_DEMData\tets003\CASER\QGIS打点\太原路网\shanxi_region.shp'
+    outputPath = r'E:\114_temp\015_DEMData\tets003\CASER\QGIS打点\太原路网'
 
     road= gpd.read_file(roadPath,encoding='utf8')
     province = gpd.read_file(provincePath,encoding='utf8')
